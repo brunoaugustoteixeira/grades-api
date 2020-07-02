@@ -2,6 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
+import { gradeRouter } from './routes/gradeRouter.js';
+import { logger } from './config/logger.js';
 import { db } from './models/index.js';
 
 (async () => {
@@ -10,7 +12,10 @@ import { db } from './models/index.js';
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+    logger.info('Conectado ao banco de dados');
   } catch (error) {
+    logger.error(`Erro ao conectar no banco de dados! ${error}`);
+
     process.exit();
   }
 })();
@@ -26,8 +31,12 @@ app.use(
   })
 );
 
+app.use(gradeRouter);
+
 app.get('/', (req, res) => {
   res.send('API em execucao');
 });
 
-app.listen(process.env.PORT || 8081, () => {});
+app.listen(process.env.PORT || 8081, () => {
+  logger.info(`Servidor em execucao na porta ${process.env.PORT}`);
+});
