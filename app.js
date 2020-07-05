@@ -37,6 +37,7 @@ app.get('/', (req, res) => {
   res.send('API em execucao');
 });
 
+//Rafhael
 app.listen(process.env.PORT || 8081, () => {
   logger.info(`Servidor em execucao na porta ${process.env.PORT}`);
 });
