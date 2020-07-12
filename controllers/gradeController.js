@@ -1,9 +1,23 @@
-import { db } from '../models/index.js';
+import { studentModel } from '../models/students.js';
 import { logger } from '../config/logger.js';
 
 const create = async (req, res) => {
+  const name = req.body.name;
+  const subject = req.body.subject;
+  const type = req.body.type;
+  const value = req.body.value;
+  const lastModified = new Date();
+
   try {
-    res.send();
+    let student = new studentModel();
+    student.name = name;
+    student.subject = subject;
+    student.type = type;
+    student.value = value;
+    student.lastModified = lastModified;
+
+    student.save();
+    res.send(student);
     logger.info(`POST /grade - ${JSON.stringify()}`);
   } catch (error) {
     res
@@ -22,7 +36,8 @@ const findAll = async (req, res) => {
     : {};
 
   try {
-    res.send();
+    const student = await studentModel.find(condition);
+    res.send(student);
     logger.info(`GET /grade`);
   } catch (error) {
     res
@@ -36,7 +51,8 @@ const findOne = async (req, res) => {
   const id = req.params.id;
 
   try {
-    res.send();
+    const student = await studentModel.findById(id);
+    res.send(student);
 
     logger.info(`GET /grade - ${id}`);
   } catch (error) {
@@ -53,8 +69,22 @@ const update = async (req, res) => {
   }
 
   const id = req.params.id;
+  const name = req.body.name;
+  const subject = req.body.subject;
+  const type = req.body.type;
+  const value = req.body.value;
+  const lastModified = new Date();
 
   try {
+    let student = await studentModel.findById(id);
+    student.name = name;
+    student.subject = subject;
+    student.type = type;
+    student.value = value;
+    student.lastModified = lastModified;
+
+    student.save();
+
     res.send({ message: 'Grade atualizado com sucesso' });
 
     logger.info(`PUT /grade - ${id} - ${JSON.stringify(req.body)}`);
@@ -68,6 +98,7 @@ const remove = async (req, res) => {
   const id = req.params.id;
 
   try {
+    await studentModel.findOneAndDelete({ _id: id });
     res.send({ message: 'Grade excluido com sucesso' });
 
     logger.info(`DELETE /grade - ${id}`);
@@ -80,9 +111,9 @@ const remove = async (req, res) => {
 };
 
 const removeAll = async (req, res) => {
-  const id = req.params.id;
-
   try {
+    await studentModel.deleteMany({});
+
     res.send({
       message: `Grades excluidos`,
     });
